@@ -8,6 +8,8 @@
 
 body {
   margin: 0;
+  height: 100vh;
+  background-color: var(--bg-primary);
 }
 
 a:visited {
@@ -26,12 +28,20 @@ header {
   top: 0;
 }
 
-main {
-  height: 100vh;
-  background-color: var(--bg-primary);
-}
-
 header > .logo {
   font-size: 2rem;
   padding: 1rem 0;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.card {
+  display: block;
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: white;
 }

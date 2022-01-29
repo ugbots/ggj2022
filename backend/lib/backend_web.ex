@@ -39,7 +39,7 @@ defmodule BackendWeb do
 
       # Provide auth convenience functions
       import BackendWeb.Helpers.Auth,
-        only: [signed_in?: 1, current_username: 1]
+        only: [signed_in?: 1, current_user: 1, current_username: 1]
 
       # Include shared imports and aliases for views
       unquote(view_helpers())

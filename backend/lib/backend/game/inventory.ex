@@ -5,7 +5,7 @@ defmodule Backend.Game.Inventory do
   schema "inventories" do
     field :last_read, :utc_datetime
     field :wood, :integer
-    field :user_id, :id
+    belongs_to :user, Backend.Accounts.User 
 
     timestamps()
   end
@@ -13,7 +13,7 @@ defmodule Backend.Game.Inventory do
   @doc false
   def changeset(inventory, attrs) do
     inventory
-    |> cast(attrs, [:wood, :last_read])
-    |> validate_required([:wood, :last_read])
+    |> cast(attrs, [:wood, :last_read, :user_id])
+    |> validate_required([:wood, :last_read, :user_id])
   end
 end

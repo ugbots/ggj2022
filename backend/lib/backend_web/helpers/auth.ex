@@ -6,7 +6,12 @@ defmodule BackendWeb.Helpers.Auth do
 
   def current_user(conn) do
     user_id = Plug.Conn.get_session(conn, :current_user_id)
-    if user_id, do: Backend.Repo.get(Backend.Accounts.User, user_id)
+    case user_id do
+      nil -> nil
+      user_id ->
+        Backend.Repo.get(Backend.Accounts.User, user_id)
+        |> Backend.Repo.preload(:inventory)
+    end 
   end
 
   def current_username(conn) do
