@@ -114,4 +114,10 @@ defmodule Backend.Accounts do
   def get_by_username(username) do
     Repo.get_by(User, username: username)
   end
+
+  def set_activity_for_user(user, activity) do
+    user
+    |> Ecto.Changeset.change(%{passive_activity: activity})
+    |> Repo.update()
+  end
 end
