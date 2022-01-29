@@ -10,6 +10,9 @@
       <li>
         Gold: <%= current_user(@conn).inventory.gold %>
       </li>
+      <li>
+        Soldiers: <%= current_user(@conn).inventory.soldiers %>
+      </li>
     </div>
   </div>
 
@@ -50,6 +53,21 @@
         <li>
           <%= link "Defend", 
             to: Routes.activity_path(@conn, :set, "defend")
+          %>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      Shop
+    </div>
+    <div class="card-body">
+      <ul>
+        <li>
+          <%= link "Soldier (10 gold)", 
+            to: Routes.shop_path(@conn, :buy, "soldiers")
           %>
         </li>
       </ul>
