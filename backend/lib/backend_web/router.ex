@@ -18,6 +18,12 @@ defmodule BackendWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+
+    # Session management
+    get "/login", SessionController, :new
+    post "/login", SessionController, :create
+    delete "/logout", SessionController, :delete
+    resources "/registrations", UserController, only: [:create, :new]
   end
 
   # Other scopes may use custom stacks.
