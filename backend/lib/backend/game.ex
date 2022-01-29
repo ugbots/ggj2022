@@ -7,6 +7,7 @@ defmodule Backend.Game do
     %Inventory{}
     |> Inventory.changeset(%{
       wood: 0,
+      gold: 0,
       last_read: DateTime.utc_now,
       user_id: user.id
     })
@@ -31,7 +32,7 @@ defmodule Backend.Game do
 
     params = case activity do
       "wood" -> Map.put(params, :wood, inventory.wood + elapsed_ticks)
-      "gold" -> params
+      "gold" -> Map.put(params, :gold, inventory.gold + elapsed_ticks)
     end
 
     Inventory.changeset(inventory, params)
