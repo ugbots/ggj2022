@@ -36,12 +36,23 @@
     <div class="card-body">
       <%= current_user(@conn).passive_activity %>
       <h2>Choose a new activity</h2>
-      <%= link "Mine gold", 
-        to: Routes.activity_path(@conn, :set, "gold")
-      %>
-      <%= link "Chop wood", 
-        to: Routes.activity_path(@conn, :set, "wood")
-      %>
+      <ul>
+        <li>
+          <%= link "Mine gold", 
+            to: Routes.activity_path(@conn, :set, "gold")
+          %>
+        </li>
+        <li>
+          <%= link "Chop wood", 
+            to: Routes.activity_path(@conn, :set, "wood")
+          %>
+        </li>
+        <li>
+          <%= link "Defend", 
+            to: Routes.activity_path(@conn, :set, "defend")
+          %>
+        </li>
+      </ul>
     </div>
   </div>
 </div>

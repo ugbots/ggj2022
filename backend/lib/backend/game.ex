@@ -33,6 +33,7 @@ defmodule Backend.Game do
     params = case activity do
       "wood" -> Map.put(params, :wood, inventory.wood + elapsed_ticks)
       "gold" -> Map.put(params, :gold, inventory.gold + elapsed_ticks)
+      "defend" -> params
     end
 
     Inventory.changeset(inventory, params)
