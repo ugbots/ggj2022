@@ -13,6 +13,9 @@
       <li>
         Soldiers: <%= current_user(@conn).inventory.soldiers %>
       </li>
+      <li>
+        Houses: <%= current_user(@conn).inventory.houses %>
+      </li>
     </div>
   </div>
 
@@ -68,6 +71,11 @@
         <li>
           <%= link "Soldier (10 gold)", 
             to: Routes.shop_path(@conn, :buy, "soldiers")
+          %>
+        </li>
+        <li>
+          <%= link "House (100 wood)", 
+            to: Routes.shop_path(@conn, :buy, "houses")
           %>
         </li>
       </ul>

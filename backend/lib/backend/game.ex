@@ -11,6 +11,7 @@ defmodule Backend.Game do
       wood: 0,
       gold: 0,
       soldiers: 0,
+      houses: 0,
       last_read: DateTime.utc_now,
       user_id: user.id
     })
@@ -21,6 +22,7 @@ defmodule Backend.Game do
     inventory = Repo.one(Ecto.assoc(user, :inventory))
     cost = case product_name do
       "soldiers" -> %{ gold: 10 }
+      "houses" -> %{ wood: 100 }
     end
 
     if can_afford(inventory, cost) do
