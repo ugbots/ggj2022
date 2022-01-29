@@ -25,10 +25,10 @@
 
   <div class="card">
     <div class="card-title">
-      Inventory
+      Activities
     </div>
     <div class="card-body">
-      You have some stuff.
+      <%= current_user(@conn).passive_activity %>
     </div>
   </div>
 </div>

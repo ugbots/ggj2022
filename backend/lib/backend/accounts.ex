@@ -51,7 +51,10 @@ defmodule Backend.Accounts do
   """
   def create_user(attrs \\ %{}) do
     %User{}
-    |> User.changeset(attrs)
+    |> User.changeset(
+      attrs
+      |> Map.put("passive_activity", "wood")
+    )
     |> Repo.insert()
   end
 
