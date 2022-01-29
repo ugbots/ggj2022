@@ -16,8 +16,8 @@
     </div>
     <div class="card-body">
       <ul>
-      <%= for log <- current_user(@conn).logs do %>
-        <li><%= log.message %></li>
+      <%= for message <- @conn.assigns.logs do %>
+        <li><%= message %></li>
       <%= end %>
       </ul>
     </div>
@@ -29,6 +29,13 @@
     </div>
     <div class="card-body">
       <%= current_user(@conn).passive_activity %>
+      <h2>Choose a new activity</h2>
+      <%= link "Mine gold", 
+        to: Routes.activity_path(@conn, :set, "gold")
+      %>
+      <%= link "Chop wood", 
+        to: Routes.activity_path(@conn, :set, "wood")
+      %>
     </div>
   </div>
 </div>

@@ -1,6 +1,7 @@
 defmodule BackendWeb.PageController do
   use BackendWeb, :controller
 
+  alias Backend.Logs
   alias BackendWeb.Helpers.Auth
 
   def index(conn, _params) do
@@ -8,11 +9,8 @@ defmodule BackendWeb.PageController do
     case Plug.Conn.get_session(conn, :current_user_id) do
       nil -> redirect(conn, to: Routes.session_path(conn, :new))
       user_id -> 
-        user = Auth.current_user(conn)
-        conn
-        |> render("index.html",
-          logs: Backend.Logs.get_logs_for_user(user)
-        )
+        logs = Logs.get_log_messages_for_user_id(user_id)
+        render(conn, "index.html", logs: logs)
     end
   end
 end

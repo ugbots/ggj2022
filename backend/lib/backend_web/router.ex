@@ -19,6 +19,8 @@ defmodule BackendWeb.Router do
 
     get "/", PageController, :index
 
+    get "/activity/:activity", ActivityController, :set
+
     # Session management
     get "/login", SessionController, :new
     post "/login", SessionController, :create
