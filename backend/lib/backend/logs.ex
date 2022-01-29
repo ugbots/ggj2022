@@ -13,10 +13,10 @@ defmodule Backend.Logs do
     |> Repo.insert
   end
 
-  def get_log_messages_for_user_id(user_id) do
+  def get_logs_for_user_id(user_id) do
     query = from log in "logs",
       where: log.user_id == ^user_id,
-      select: log.message,
+      select: { log.inserted_at, log.message },
       order_by: [desc: log.inserted_at],
       limit: 10
     Repo.all(query)

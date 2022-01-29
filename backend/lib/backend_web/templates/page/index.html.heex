@@ -16,8 +16,11 @@
     </div>
     <div class="card-body">
       <ul>
-      <%= for message <- @conn.assigns.logs do %>
-        <li><%= message %></li>
+      <%= for log <- @conn.assigns.logs do %>
+        <li>
+          <%= elem(log, 0) %>
+          <%= elem(log, 1) %>
+        </li>
       <%= end %>
       </ul>
     </div>
