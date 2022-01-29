@@ -18,6 +18,7 @@ config :backend, BackendWeb.Endpoint,
   code_reloader: true,
   debug_errors: true,
   secret_key_base: "oCk1S7gZDaUGrx72hrWpxdUuEWnr6axX0I0lqIRDxTeUkK3myn+gBmW70PNUEqnD",
+  reloadable_compilers: [:phoenix_sass],
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
