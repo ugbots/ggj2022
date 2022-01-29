@@ -1,0 +1,14 @@
+h3 {
+  color: blue}
+
+#statpanel, #statbar {
+  padding: 5px;
+  text-align: center;
+  background-color: #959695;
+  border: solid 1px #c3c3c3;
+}
+
+#statpanel {
+  padding: 50px;
+  display: none;
+}
