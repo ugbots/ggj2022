@@ -6,7 +6,9 @@ defmodule Backend.Accounts.User do
   schema "users" do
     field :encrypted_password, :string
     field :username, :string
+
     has_one :inventory, Backend.Game.Inventory
+    has_many :logs, Backend.Logs.Log
 
     timestamps()
   end

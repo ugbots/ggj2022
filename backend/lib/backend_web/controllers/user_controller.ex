@@ -4,6 +4,7 @@ defmodule BackendWeb.UserController do
   alias Backend.Accounts
   alias Backend.Accounts.User
   alias Backend.Game
+  alias Backend.Logs
 
   def new(conn, _params) do
     changeset = Accounts.change_user(%User{})
@@ -13,8 +14,10 @@ defmodule BackendWeb.UserController do
   def create(conn, %{"user" => user_params}) do
     case Accounts.create_user(user_params) do
       {:ok, user} ->
+        Logs.create_user_log(user, "User " <> user.username <> " created.")
         case Game.create_inventory_for_user(user) do
           {:ok, inventory} ->
+            Logs.create_user_log(user, "Inventory created.")
             conn
             |> put_session(:current_user_id, user.id)
             |> put_flash(:info, "Signed up successfully.")

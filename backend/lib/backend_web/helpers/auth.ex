@@ -11,6 +11,7 @@ defmodule BackendWeb.Helpers.Auth do
       user_id ->
         Backend.Repo.get(Backend.Accounts.User, user_id)
         |> Backend.Repo.preload(:inventory)
+        |> Backend.Repo.preload(:logs)
     end 
   end
 

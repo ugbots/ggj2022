@@ -6,7 +6,7 @@ defmodule Backend.Game do
   def create_inventory_for_user(user) do
     %Inventory{}
     |> Inventory.changeset(%{
-      wood: 100,
+      wood: 0,
       last_read: DateTime.utc_now,
       user_id: user.id
     })

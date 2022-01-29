@@ -12,10 +12,14 @@
 
   <div class="card">
     <div class="card-title">
-      Inventory
+      Logs
     </div>
     <div class="card-body">
-      You have some stuff.
+      <ul>
+      <%= for log <- current_user(@conn).logs do %>
+        <li><%= log.message %></li>
+      <%= end %>
+      </ul>
     </div>
   </div>
 
