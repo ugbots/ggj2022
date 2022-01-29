@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- <script>jQuery</script>*/ -->
+    <title>MULTITUDE</title>
+    <link ref="stylesheet" type="text/css" href="style.css" />
+  </head>
+
+  <body>
+    <h3>RESOURCES</h3>
+    <div id="statbar">GOLD:0 LUMBER:0 POPULATION:1</div>
+    <div id="statpanel">
+    <br>
+      Team Gold: 0
+      <br>
+      Team Lumber: 0
+      <br>
+      Team Population: 0
+    </div>
+    <script>
+      $(document).ready(function () {
+        $("#statbar").click(function () {
+          $("#statpanel").slideToggle(300);
+        });
+      });
+    </script>
+
+    <div>
+      <!-- Jquery AJAX function below should wait til page load, then use
+        $(selector).load(URL,data,callback);-->
+      <script></script>
+    </div>
+  </body>
+</html>
