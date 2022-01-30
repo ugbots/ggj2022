@@ -13,11 +13,19 @@
       Nothing.
     <% else %>
       <ul>
-        <%= for {item, amount} <- items do %>
-          <li><%= "#{Backend.Items.get_item(String.to_atom(item)).label}: #{amount}" %></li>
+        <%= for {item_name, amount} <- items do %>
+          <% item = Backend.Items.get_item(String.to_atom(item_name)) %>
+          <% damage_str = if Map.has_key?(item, :weapon) do
+               " (#{item.weapon.damage} damage)" 
+             else 
+               ""
+             end
+          %>
+          <li><%= "#{item.label}: #{amount}#{damage_str}" %></li>
         <% end %>
       </ul>
     <% end %>
+    <%= button "Refresh", to: Routes.page_path(@conn, :index), method: :get %>
   </div>
 
   <div class="p-4 border rounded border-gray-500">
@@ -51,7 +59,8 @@
   </div>
 
   <div class="p-4 border rounded border-gray-500">
-    <div class="text-lg">
+    <div class="text-lg cursor-help"
+         title="You can spend resources to buy other resources. 'Required' resources are not consumed.">
       Shop
     </div>
     <div class="card-body">
@@ -69,7 +78,8 @@
   </div>
 
   <div class="p-4 border rounded border-gray-500">
-    <div class="text-lg">
+    <div class="text-lg cursor-help"
+         title="You may donate any number of resources to any other player.">
       Donations
     </div>
     <div class="card-body">
@@ -93,7 +103,8 @@
   </div>
 
   <div class="p-4 border rounded border-gray-500">
-    <div class="text-lg">
+    <div class="text-lg cursor-help"
+         title="You may attack any player's resources with weapons.">
       Attacks
     </div>
     <div class="card-body">
