@@ -29,6 +29,20 @@ defmodule Backend.Game do
     |> Map.keys()
   end
 
+  @spec all_weapon_names_for_user(%User{}) :: [String.t()]
+  def all_weapon_names_for_user(user) do
+    all_weapons = Items.weapon_items()
+
+    inventory_for_user(user).items
+    |> Enum.flat_map(fn {item_name, _} ->
+      if Map.has_key?(all_weapons, String.to_atom(item_name)) do
+        [item_name]
+      else
+        []
+      end
+    end)
+  end
+
   @spec create_inventory_for_user(%User{}) :: any
   def create_inventory_for_user(user) do
     %Inventory{}
@@ -114,10 +128,18 @@ defmodule Backend.Game do
     end
   end
 
-  def attack_username_from_user(user, target_username, amount_str, product_name) do
+  def attack_username_from_user(
+        user,
+        target_username,
+        target_product_name,
+        amount_str,
+        product_name
+      ) do
+    product = String.to_atom(product_name)
+    target_product = String.to_atom(target_product_name)
     amount = elem(Integer.parse(amount_str), 0)
-    inventory = Repo.one(Ecto.assoc(user, :inventory))
-    delta = Map.put(%{}, String.to_atom(product_name), -amount)
+    inventory = inventory_for_user(user)
+    user_delta = Map.put(%{}, product, -amount)
     target_user = Accounts.get_by_username(target_username)
 
     cond do
@@ -127,7 +149,7 @@ defmodule Backend.Game do
       amount <= 0 ->
         Logs.create_user_log(user, "Attack size must be positive.")
 
-      (result = can_afford(inventory, %{}, delta)) != :ok ->
+      (result = can_afford(inventory, %{}, user_delta)) != :ok ->
         {:error, message} = result
 
         Logs.create_user_log(
@@ -144,21 +166,26 @@ defmodule Backend.Game do
         )
 
       true ->
-        target_inv = Repo.one(Ecto.assoc(target_user, :inventory))
+        total_damage = amount * Items.get_item(product).weapon.damage
+        target_resistance = Items.get_item(target_product).damage_resistance
+        items_destroyed = trunc(total_damage / target_resistance)
 
-        target_delta = Map.put(%{}, :house, -amount)
+        target_inv = inventory_for_user(target_user)
+        target_delta = Map.put(%{}, target_product, -items_destroyed)
         adjust(target_inv, %{}, target_delta)
 
         Logs.create_user_log(
           target_user,
-          "Attacked by #{user.username}! Lost #{amount_str} houses."
+          "Attacked by #{user.username} with #{amount} #{product_name}! " <>
+            "Lost #{items_destroyed} #{target_product_name}."
         )
 
-        adjust(inventory, %{}, delta)
+        adjust(inventory, %{}, user_delta)
 
         Logs.create_user_log(
           user,
-          "Attacked #{target_username} with #{amount_str} #{product_name}"
+          "Attacked #{target_username} with #{amount} #{product_name}! " <>
+            "Destroyed #{items_destroyed} #{target_product_name}."
         )
     end
   end
@@ -211,7 +238,7 @@ defmodule Backend.Game do
 
     cond do
       not has_requirements -> {:error, "Missing required items"}
-      not delta_does_not_go_negative -> {:error, "Insufficient funds"}
+      not delta_does_not_go_negative -> {:error, "Can't afford to."}
       true -> :ok
     end
   end

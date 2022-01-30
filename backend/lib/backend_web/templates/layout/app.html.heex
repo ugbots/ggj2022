@@ -1,7 +1,15 @@
 <main class="pt-24 px-32 bg-black text-white h-full">
-  <div class="alert-wrapper">
-    <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-    <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+  <div class="flex flex-row justify-center">
+    <%= if get_flash(@conn, :info) do %>
+      <div class="p-2 rounded bg-gray-900 text-white">
+        <%= get_flash(@conn, :info) %>
+      </div>
+    <% end %>
+    <%= if get_flash(@conn, :error) do %>
+      <div class="p-2 rounded bg-red-900 text-white">
+        <%= get_flash(@conn, :error) %>
+      </div>
+    <% end %>
   </div>
   <%= @inner_content %>
 </main>

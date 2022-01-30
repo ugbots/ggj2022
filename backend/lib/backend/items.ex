@@ -11,11 +11,23 @@ defmodule Backend.Items do
           cost: %{atom() => integer()}
         }
 
+  @type weapon :: %{
+          damage: integer()
+        }
+
+  @type item :: %{
+          damage_resistance: integer(),
+          generated: nil | generated(),
+          for_sale: nil | for_sale(),
+          weapon: nil | weapon()
+        }
+
   @items %{
     ##
     ## Generated items
     ##
     clay: %{
+      damage_resistance: 1,
       generated: %{
         activity_label: "Dig clay",
         activity: "clay",
@@ -23,6 +35,7 @@ defmodule Backend.Items do
       }
     },
     wood: %{
+      damage_resistance: 1,
       generated: %{
         activity_label: "Chop wood",
         activity: "wood",
@@ -30,6 +43,7 @@ defmodule Backend.Items do
       }
     },
     gold: %{
+      damage_resistance: 2,
       generated: %{
         activity_label: "Mine gold",
         activity: "gold",
@@ -40,7 +54,20 @@ defmodule Backend.Items do
     ##
     ## Items for sale
     ##
+    pointy_stick: %{
+      damage_resistance: 1,
+      for_sale: %{
+        label: "Pointy stick",
+        cost: %{
+          wood: 1
+        }
+      },
+      weapon: %{
+        damage: 1
+      }
+    },
     kiln: %{
+      damage_resistance: 10,
       for_sale: %{
         label: "Kiln",
         cost: %{
@@ -50,6 +77,7 @@ defmodule Backend.Items do
       }
     },
     brick: %{
+      damage_resistance: 10,
       for_sale: %{
         label: "Brick",
         requirements: %{
@@ -60,15 +88,8 @@ defmodule Backend.Items do
         }
       }
     },
-    soldier: %{
-      for_sale: %{
-        label: "Soldier",
-        cost: %{
-          gold: 10
-        }
-      }
-    },
     house: %{
+      damage_resistance: 20,
       for_sale: %{
         label: "House",
         cost: %{
@@ -78,6 +99,10 @@ defmodule Backend.Items do
       }
     }
   }
+
+  def get_item(item_key) do
+    Map.get(@items, item_key)
+  end
 
   ##
   ## Generated items
@@ -89,6 +114,12 @@ defmodule Backend.Items do
   @spec generated_items :: %{atom() => generated()}
   def generated_items() do
     items_by_property(:generated)
+  end
+
+  @spec all_item_keys :: [String.t()]
+  def all_item_keys() do
+    @items
+    |> Enum.map(fn {k, _} -> Atom.to_string(k) end)
   end
 
   ##
@@ -135,6 +166,21 @@ defmodule Backend.Items do
   def requirements_for_item(item_key) do
     Map.get(@items, item_key).for_sale
     |> Map.get(:requirements, %{})
+  end
+
+  ##
+  ## Weapons
+  ##
+
+  @spec weapon_items() :: %{atom => weapon()}
+  def weapon_items() do
+    items_by_property(:weapon)
+  end
+
+  @spec weapon_keys() :: [String.t()]
+  def weapon_keys() do
+    weapon_items()
+    |> Enum.map(fn {k, _} -> Atom.to_string(k) end)
   end
 
   @spec items_by_property(atom()) :: %{atom() => any()}

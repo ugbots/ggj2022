@@ -10,6 +10,7 @@ defmodule BackendWeb.AttackController do
     Game.attack_username_from_user(
       user,
       Map.get(attack_params, "target"),
+      Map.get(attack_params, "target_product"),
       Map.get(attack_params, "amount"),
       Map.get(attack_params, "product"))
 

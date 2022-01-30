@@ -71,7 +71,7 @@
           :target, 
           placeholder: "Username to donate to" 
         %>
-        <%= number_input f, :amount, value: 100 %>
+        <%= number_input f, :amount, value: 1 %>
         <%= select f, 
           :product, 
           value: Backend.Game.all_item_names_for_user(user) 
@@ -87,12 +87,15 @@
     </div>
     <div class="card-body">
       <%= form_for @conn, Routes.attack_path(@conn, :attack), [as: :attack], fn f -> %>
+        <%= label f, :target %>
         <%= text_input f, 
           :target, 
           placeholder: "Username to attack" 
         %>
-        <%= number_input f, :amount, value: 100 %>
-        <%= select f, :product, value: ["soldiers"] %>
+        <%= select f, :target_product, value: Backend.Items.all_item_keys() %>
+        <%= label :amount, "Attack with" %>
+        <%= number_input f, :amount, value: 1 %>
+        <%= select f, :product, value: Backend.Game.all_weapon_names_for_user(user) %>
         <%= submit "Attack" %>
       <% end %>
     </div>
