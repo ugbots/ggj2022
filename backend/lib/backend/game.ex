@@ -83,6 +83,48 @@ defmodule Backend.Game do
     end
   end
 
+  def attack_username_from_user(user, target_username, amount_str, product_name) do
+    amount = elem(Integer.parse(amount_str), 0)
+    inventory = Repo.one(Ecto.assoc(user, :inventory))
+    delta = Map.put(%{}, String.to_atom(product_name), -amount)
+    target_user = Accounts.get_by_username(target_username)
+
+    cond do
+      user.username == target_username ->
+        Logs.create_user_log(user, "Cannot attack yourself.")
+      amount <= 0 ->
+        Logs.create_user_log(user, "Attack size must be positive.")
+      not can_afford(inventory, delta) ->
+        Logs.create_user_log(
+          user, 
+          "Cannot attack " <> target_username <>
+          " with " <> amount_str <> " " <> product_name <> 
+          ": not enough resources.")
+      target_user == nil ->
+        Logs.create_user_log(
+          user, 
+          "Cannot attack " <> target_username <>
+          " with " <> amount_str <> " " <> product_name <> 
+          ": user not found.")
+      true ->
+        target_inv = Repo.one(Ecto.assoc(target_user, :inventory))
+
+        target_delta = Map.put(%{}, :houses, -amount)
+        adjust(target_inv, target_delta)
+        Logs.create_user_log(
+          target_user, 
+          "Attacked by " <> user.username <> "! " <>
+          "Lost " <> amount_str <> " houses.")
+
+        adjust(inventory, delta)
+        Logs.create_user_log(
+          user, 
+          "Attacked " <> target_username <>
+          " with " <> amount_str <> " " <> product_name <> ".")
+    end
+  end
+
+
   def reconcile_inventory_for_user(user) do
     Repo.one(Ecto.assoc(user, :inventory))
     |> reconcile(user.passive_activity)

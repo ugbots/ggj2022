@@ -98,4 +98,21 @@
       <% end %>
     </div>
   </div>
+
+  <div class="card">
+    <div class="card-title">
+      Attacks
+    </div>
+    <div class="card-body">
+      <%= form_for @conn, Routes.attack_path(@conn, :attack), [as: :attack], fn f -> %>
+        <%= text_input f, 
+          :target, 
+          placeholder: "Username to attack" 
+        %>
+        <%= number_input f, :amount, value: 100 %>
+        <%= select f, :product, value: ["soldiers"] %>
+        <%= submit "Attack" %>
+      <% end %>
+    </div>
+  </div>
 </div>

@@ -28,6 +28,9 @@ defmodule BackendWeb.Router do
     # Donations
     post "/donate", DonationController, :donate
 
+    # Attacks
+    post "/attack", AttackController, :attack
+
     # Session management
     get "/login", SessionController, :new
     post "/login", SessionController, :create
