@@ -1,10 +1,11 @@
+<% user = current_user(@conn) %>
 <div class="flex-row">
   <div class="card">
     <div class="card-title">
       Inventory
     </div>
     <div class="card-body">
-      <% items = current_user(@conn).inventory.items %>
+      <% items = user.inventory.items %>
       <%= if items == %{} do %>
         Nothing.
       <% else %>
@@ -19,7 +20,7 @@
       Activities
     </div>
     <div class="card-body">
-      Current activity: <%= current_user(@conn).passive_activity %>
+      Current activity: <%= user.passive_activity %>
       <h2>Choose a new activity</h2>
       <ul>
         <%= for {_, item} <- Backend.Items.generated_items() do %>
@@ -71,7 +72,10 @@
           placeholder: "Username to donate to" 
         %>
         <%= number_input f, :amount, value: 100 %>
-        <%= select f, :product, value: ["soldiers", "houses"] %>
+        <%= select f, 
+          :product, 
+          value: Backend.Game.all_item_names_for_user(user) 
+        %>
         <%= submit "Donate" %>
       <% end %>
     </div>

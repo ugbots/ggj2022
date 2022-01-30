@@ -8,6 +8,27 @@ defmodule Backend.Game do
   alias Backend.Repo
   alias Backend.Game.Inventory
 
+  ##
+  ## Accessors
+  ##
+
+  @doc """
+  Gets the name of all items held by the given user.
+  """
+  @spec inventory_for_user(%User{}) :: %Inventory{}
+  def inventory_for_user(user) do
+    Repo.one(Ecto.assoc(user, :inventory))
+  end
+
+  @doc """
+  Gets the name of all items held by the given user.
+  """
+  @spec all_item_names_for_user(%User{}) :: [String.t()]
+  def all_item_names_for_user(user) do
+    inventory_for_user(user).items
+    |> Map.keys()
+  end
+
   @spec create_inventory_for_user(%User{}) :: any
   def create_inventory_for_user(user) do
     %Inventory{}
@@ -23,8 +44,8 @@ defmodule Backend.Game do
 
   @spec buy_product_for_user(%User{}, binary()) :: any
   def buy_product_for_user(user, product_name) do
+    inventory = inventory_for_user(user)
     product = String.to_atom(product_name)
-    inventory = Repo.one(Ecto.assoc(user, :inventory))
 
     requirements = Items.requirements_for_item(product)
 
@@ -57,7 +78,9 @@ defmodule Backend.Game do
       amount <= 0 ->
         Logs.create_user_log(user, "Donation amount must be positive.")
 
-      {:error, message} = can_afford(inventory, %{}, delta) ->
+      (result = can_afford(inventory, %{}, delta)) != :ok ->
+        {:error, message} = result
+
         Logs.create_user_log(
           user,
           "Cannot donate #{amount_str} #{product_name} " <>
@@ -104,7 +127,9 @@ defmodule Backend.Game do
       amount <= 0 ->
         Logs.create_user_log(user, "Attack size must be positive.")
 
-      {:error, message} = can_afford(inventory, %{}, delta) ->
+      (result = can_afford(inventory, %{}, delta)) != :ok ->
+        {:error, message} = result
+
         Logs.create_user_log(
           user,
           "Cannot attack #{target_username} " <>
