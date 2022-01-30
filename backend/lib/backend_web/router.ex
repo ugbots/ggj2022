@@ -25,6 +25,9 @@ defmodule BackendWeb.Router do
     # Shopping
     get "/shop/:product", ShopController, :buy
 
+    # Donations
+    post "/donate", DonationController, :donate
+
     # Session management
     get "/login", SessionController, :new
     post "/login", SessionController, :create

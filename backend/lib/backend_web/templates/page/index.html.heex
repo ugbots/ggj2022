@@ -30,7 +30,7 @@
           <%= elem(log, 0) %>
           <%= elem(log, 1) %>
         </li>
-      <%= end %>
+      <% end %>
       </ul>
     </div>
   </div>
@@ -79,6 +79,23 @@
           %>
         </li>
       </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      Donations
+    </div>
+    <div class="card-body">
+      <%= form_for @conn, Routes.donation_path(@conn, :donate), [as: :donation], fn f -> %>
+        <%= text_input f, 
+          :target, 
+          placeholder: "Username to donate to" 
+        %>
+        <%= number_input f, :amount, value: 100 %>
+        <%= select f, :product, value: ["soldiers", "houses"] %>
+        <%= submit "Donate" %>
+      <% end %>
     </div>
   </div>
 </div>
