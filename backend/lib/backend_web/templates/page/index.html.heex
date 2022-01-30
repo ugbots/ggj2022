@@ -1,22 +1,26 @@
 <% user = current_user(@conn) %>
-<div class="flex-row">
-  <div class="card">
-    <div class="card-title">
+<div class="flex flex-row justify-around flex-wrap">
+  <div class="p-4 border rounded border-gray-500">
+    <div class="text-lg">
       Inventory
     </div>
-    <div class="card-body">
-      <% items = user.inventory.items %>
-      <%= if items == %{} do %>
-        Nothing.
-      <% else %>
+    <div class="text-yellow-200">
+      Victory points: <%= Backend.Game.victory_points_for_user(user) %>
+    </div>
+    <% items = user.inventory.items %>
+    <%= if items == %{} do %>
+      Nothing.
+    <% else %>
+      <ul>
         <%= for {item, amount} <- items do %>
           <li><%= "#{item}: #{amount}" %></li>
         <% end %>
-      <% end %>
-    </div>
+      </ul>
+    <% end %>
   </div>
-  <div class="card">
-    <div class="card-title">
+
+  <div class="p-4 border rounded border-gray-500">
+    <div class="text-lg">
       Activities
     </div>
     <div class="card-body">
@@ -43,8 +47,8 @@
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">
+  <div class="p-4 border rounded border-gray-500">
+    <div class="text-lg">
       Shop
     </div>
     <div class="card-body">
@@ -61,12 +65,13 @@
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">
+  <div class="p-4 border rounded border-gray-500">
+    <div class="text-lg">
       Donations
     </div>
     <div class="card-body">
-      <%= form_for @conn, Routes.donation_path(@conn, :donate), [as: :donation], fn f -> %>
+      <%= form_for @conn, Routes.donation_path(@conn, :donate), 
+           [class: "flex flex-col", as: :donation], fn f -> %>
         <%= text_input f, 
           :target, 
           placeholder: "Username to donate to" 
@@ -81,12 +86,13 @@
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">
+  <div class="p-4 border rounded border-gray-500">
+    <div class="text-lg">
       Attacks
     </div>
     <div class="card-body">
-      <%= form_for @conn, Routes.attack_path(@conn, :attack), [as: :attack], fn f -> %>
+      <%= form_for @conn, Routes.attack_path(@conn, :attack), 
+          [class: "flex flex-col", as: :attack], fn f -> %>
         <%= label f, :target %>
         <%= text_input f, 
           :target, 
@@ -96,18 +102,20 @@
         <%= label :amount, "Attack with" %>
         <%= number_input f, :amount, value: 1 %>
         <%= select f, :product, value: Backend.Game.all_weapon_names_for_user(user) %>
-        <%= submit "Attack" %>
+        <div class="p-2">
+          <%= submit "Attack" %>
+        </div>
       <% end %>
     </div>
   </div>
+</div>
 
-  <div class="p-4 mt-10 w-full bg-gray-900 rounded">
-    <div class="text-lg">
-      Logs
-    </div>
-    <pre>
-      <%= for log <- @conn.assigns.logs do %><%= elem(log, 0) %>: <%= elem(log, 1) %>
-      <% end %>
-    </pre>
+<div class="p-4 mt-10 w-full bg-gray-900 rounded">
+  <div class="text-lg">
+    Logs
   </div>
+  <pre>
+    <%= for log <- @conn.assigns.logs do %><%= elem(log, 0) %>: <%= elem(log, 1) %>
+    <% end %>
+  </pre>
 </div>

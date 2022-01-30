@@ -21,15 +21,15 @@
       </div>
       <nav class="flex flex-col justify-center">
           <%= if signed_in?(@conn) do %>
-            <span>
+            <span class="py-1">
               Logged in as <%= current_username(@conn) %>
             </span>
-            <span>
-              <%= link "Log out", to: Routes.session_path(@conn, :delete), method: :delete %>
+            <span class="py-1">
+              <%= button "Log out", to: Routes.session_path(@conn, :delete), method: :delete %>
             </span>
           <% else %>
-            <span><%= link "Log in", to: Routes.session_path(@conn, :new) %></span>
-            <span><%= link "Sign up", to: Routes.user_path(@conn, :new) %></span>
+            <span class="py-1"><%= button "Log in", to: Routes.session_path(@conn, :new), method: :get %></span>
+            <span class="py-1"><%= button "Sign up", to: Routes.user_path(@conn, :new), method: :get%></span>
           <% end %>
       </nav>
     </header>

@@ -17,6 +17,7 @@ defmodule Backend.Items do
 
   @type item :: %{
           damage_resistance: integer(),
+          victory_points: nil | integer(),
           generated: nil | generated(),
           for_sale: nil | for_sale(),
           weapon: nil | weapon()
@@ -90,6 +91,7 @@ defmodule Backend.Items do
     },
     house: %{
       damage_resistance: 20,
+      victory_points: 1,
       for_sale: %{
         label: "House",
         cost: %{
@@ -100,8 +102,8 @@ defmodule Backend.Items do
     }
   }
 
-  def get_item(item_key) do
-    Map.get(@items, item_key)
+  def get_item(item_atom) do
+    Map.get(@items, item_atom)
   end
 
   ##

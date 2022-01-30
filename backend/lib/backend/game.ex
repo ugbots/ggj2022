@@ -29,6 +29,15 @@ defmodule Backend.Game do
     |> Map.keys()
   end
 
+  @spec victory_points_for_user(%User{}) :: integer()
+  def victory_points_for_user(user) do
+    inventory_for_user(user).items
+    |> Enum.reduce(0, fn {k, _}, acc ->
+      item = Items.get_item(String.to_atom(k))
+      acc + Map.get(item, :victory_points, 0)
+    end)
+  end
+
   @spec all_weapon_names_for_user(%User{}) :: [String.t()]
   def all_weapon_names_for_user(user) do
     all_weapons = Items.weapon_items()
