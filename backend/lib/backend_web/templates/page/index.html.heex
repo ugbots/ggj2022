@@ -48,18 +48,14 @@
     </div>
     <div class="card-body">
       <ul>
-        <li>
-          <%= button "Soldier (10 gold)", 
-            to: Routes.shop_path(@conn, :buy, "soldiers"),
-            method: :get
-          %>
-        </li>
-        <li>
-          <%= button "House (100 wood)", 
-            to: Routes.shop_path(@conn, :buy, "houses"),
-            method: :get
-          %>
-        </li>
+        <%= for {key, item} <- Backend.Items.for_sale_items() do %>
+          <li>
+            <%= button Backend.Items.for_sale_cost_string(item), 
+              to: Routes.shop_path(@conn, :buy, Atom.to_string(key)),
+              method: :get
+            %>
+          </li>
+        <% end %>
       </ul>
     </div>
   </div>

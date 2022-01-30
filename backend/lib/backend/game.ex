@@ -25,13 +25,9 @@ defmodule Backend.Game do
     product = String.to_atom(product_name)
     inventory = Repo.one(Ecto.assoc(user, :inventory))
 
-    cost =
-      case product do
-        :soldiers -> %{gold: -10}
-        :houses -> %{wood: -100}
-      end
-
-    delta = Map.put(cost, product, 1)
+    delta =
+      Backend.Items.cost_delta_for_item(product)
+      |> Map.put(product, 1)
 
     case adjust(inventory, delta) do
       :ok ->
@@ -122,7 +118,7 @@ defmodule Backend.Game do
       true ->
         target_inv = Repo.one(Ecto.assoc(target_user, :inventory))
 
-        target_delta = Map.put(%{}, :houses, -amount)
+        target_delta = Map.put(%{}, :house, -amount)
         adjust(target_inv, target_delta)
 
         Logs.create_user_log(
@@ -148,7 +144,7 @@ defmodule Backend.Game do
 
   @spec reconcile(%Inventory{}, String.t()) :: Ecto.Changeset.t()
   defp reconcile(inv, activity_str) do
-    activity = String.to_existing_atom(activity_str)
+    activity = String.to_atom(activity_str)
 
     now = DateTime.utc_now()
     then = inv.last_read
