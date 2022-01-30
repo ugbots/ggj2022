@@ -20,7 +20,7 @@ defmodule Backend.Items do
       generated: %{
         activity_label: "Mine gold",
         activity: "gold",
-        seconds_per_item: 5
+        seconds_per_item: 1
       }
     }
   }

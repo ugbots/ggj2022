@@ -11,11 +11,10 @@ defmodule Backend.Game do
   def create_inventory_for_user(user) do
     %Inventory{}
     |> Inventory.changeset(%{
-      wood: 0,
-      gold: 0,
-      soldiers: 0,
-      houses: 0,
       last_read: DateTime.utc_now(),
+      items: %{
+        gold: 100
+      },
       user_id: user.id
     })
     |> Repo.insert()
@@ -148,50 +147,52 @@ defmodule Backend.Game do
   end
 
   @spec reconcile(%Inventory{}, String.t()) :: Ecto.Changeset.t()
-  defp reconcile(inventory, activity_str) do
+  defp reconcile(inv, activity_str) do
     activity = String.to_existing_atom(activity_str)
-    now = DateTime.utc_now()
-    then = inventory.last_read
-    seconds_between = DateTime.diff(now, then)
 
+    now = DateTime.utc_now()
+    then = inv.last_read
+    seconds_between = DateTime.diff(now, then)
     elapsed_seconds = trunc(seconds_between)
 
-    params = %{last_read: now}
-
-    generators = Backend.Items.generated_items()
-
-    params =
-      case Map.get(generators, activity, nil) do
+    items =
+      case Map.get(Backend.Items.generated_items(), activity, nil) do
         nil ->
-          params
+          inv.items
 
         gen ->
-          old_amount = Map.get(inventory, activity, 0)
+          old_amount = Map.get(inv.items, activity_str, 0)
           delta = trunc(elapsed_seconds / gen.seconds_per_item)
-          Map.put(params, activity, old_amount + delta)
+          Map.put(inv.items, activity_str, old_amount + delta)
       end
 
-    Inventory.changeset(inventory, params)
+    params = %{
+      last_read: now,
+      items: items
+    }
+
+    Inventory.changeset(inv, params)
   end
 
-  defp can_afford(inventory, delta) do
+  defp can_afford(inv, delta) do
     Enum.all?(delta, fn {item, amount} ->
-      Map.get(inventory, item) + amount >= 0
+      Map.get(inv.items, Atom.to_string(item), 0) + amount >= 0
     end)
   end
 
-  defp adjust(inventory, delta) do
-    case can_afford(inventory, delta) do
+  defp adjust(inv, delta) do
+    case can_afford(inv, delta) do
       false ->
         {:error, "insufficent funds"}
 
       true ->
-        params =
-          Map.merge(Map.from_struct(inventory), delta, fn _k, inv, d ->
-            inv + d
+        items =
+          Enum.reduce(delta, inv.items, fn {item, amount}, acc ->
+            key = Atom.to_string(item)
+            Map.put(acc, key, Map.get(acc, key, 0) + amount)
           end)
 
-        Repo.update(Inventory.changeset(inventory, params))
+        Repo.update(Inventory.changeset(inv, %{items: items}))
         :ok
     end
   end

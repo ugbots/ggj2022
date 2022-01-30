@@ -4,18 +4,14 @@
       Inventory
     </div>
     <div class="card-body">
-      <li>
-        Wood: <%= current_user(@conn).inventory.wood %>
-      </li>
-      <li>
-        Gold: <%= current_user(@conn).inventory.gold %>
-      </li>
-      <li>
-        Soldiers: <%= current_user(@conn).inventory.soldiers %>
-      </li>
-      <li>
-        Houses: <%= current_user(@conn).inventory.houses %>
-      </li>
+      <% items = current_user(@conn).inventory.items %>
+      <%= if items == %{} do %>
+        Nothing.
+      <% else %>
+        <%= for {item, amount} <- items do %>
+          <li><%= "#{item}: #{amount}" %></li>
+        <% end %>
+      <% end %>
     </div>
   </div>
   <div class="card">
