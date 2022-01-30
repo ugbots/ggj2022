@@ -19,6 +19,7 @@ defmodule BackendWeb.Router do
 
     get "/", PageController, :index
     get "/about", PageController, :about
+    get "/leaderboard", PageController, :leaderboard
 
     # Activities
     get "/activity/:activity", ActivityController, :set

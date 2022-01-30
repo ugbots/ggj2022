@@ -18,4 +18,13 @@ defmodule BackendWeb.PageController do
   def about(conn, _) do
     render(conn, "about.html")
   end
+
+  def leaderboard(conn, _) do
+    users =
+      Backend.Accounts.list_users()
+      |> Enum.sort_by(&Backend.Game.victory_points_for_user/1, :desc)
+      |> Enum.take(10)
+
+    render(conn, "leaderboard.html", users: users)
+  end
 end

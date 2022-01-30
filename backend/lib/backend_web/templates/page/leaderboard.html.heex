@@ -1,0 +1,17 @@
+<div class="p-4 border rounded border-gray-500">
+  <div class="text-lg">
+    Top players
+  </div>
+  <table class="bg-gray-900 w-64">
+    <tr>
+      <th>Username</th>
+      <th>Victory points</th>
+    </tr>
+    <%= for user <- @conn.assigns.users do %>
+      <tr>
+        <td><%= user.username %></td>
+        <td><%= Backend.Game.victory_points_for_user(user) %></td>
+      </tr>
+    <% end %>
+  </table>
+</div>
