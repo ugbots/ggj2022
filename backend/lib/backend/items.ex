@@ -14,6 +14,13 @@ defmodule Backend.Items do
     ##
     ## Generated items
     ##
+    clay: %{
+      generated: %{
+        activity_label: "Dig clay",
+        activity: "clay",
+        seconds_per_item: 2
+      }
+    },
     wood: %{
       generated: %{
         activity_label: "Chop wood",
@@ -44,8 +51,8 @@ defmodule Backend.Items do
       for_sale: %{
         label: "House",
         cost: %{
-          wood: 10,
-          gold: 5
+          clay: 50,
+          wood: 100,
         }
       }
     }
