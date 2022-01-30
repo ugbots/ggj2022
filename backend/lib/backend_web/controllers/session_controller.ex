@@ -7,6 +7,7 @@ defmodule BackendWeb.SessionController do
     render(conn, "new.html")
   end
 
+
   def create(conn, %{"session" => auth_params}) do
     user = Accounts.get_by_username(auth_params["username"])
 

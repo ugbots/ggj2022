@@ -3,6 +3,7 @@ defmodule BackendWeb.ShopController do
 
   alias Backend.Game
 
+  @spec buy(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def buy(conn, %{"product" => product}) do
     user_id = Plug.Conn.get_session(conn, :current_user_id)
     user = Backend.Repo.get(Backend.Accounts.User, user_id)

@@ -1,47 +1,37 @@
-:root {
-  --bg-primary: #6CA4AB;
-  --bg-secondary: #9FAC7C;
-  --fg-primary: #828767;
-  --fg-secondary: #765C3A;
-  --accent: #684C37;
-}
-
 body {
-  margin: 0;
-  height: 100vh;
-  background-color: var(--bg-primary);
+  font-family: 'Titillium Web', sans-serif;
 }
 
-a:visited {
-  color: rgb()
+.text-display {
+  font-family: 'Supermercado One', cursive;
 }
 
-header {
-  background-color: var(--bg-secondary);
-  box-shadow: 0 1rem 2rem var(--bg-primary);
-  padding: 0 2rem;
-  color: black;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
+.glow-shadow {
+  box-shadow: 0 -1rem 3rem 1rem purple;
 }
 
-header > .logo {
-  font-size: 2rem;
-  padding: 1rem 0;
+button {
+  border: 1px solid white;
+  border-radius: 0.3rem;
+  padding: 0.2rem 1rem;
 }
 
-.flex-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+input, select {
+  padding: .2rem .5rem;
+  background-color: black;
+  color: white;
+  border: 1px solid white;
 }
 
-.card {
-  display: block;
-  padding: 1rem;
-  border-radius: 1rem;
+input:focus, select:focus {
+  border-color: blue;
+}
+
+button:hover {
   background-color: white;
+  color: black;
+}
+
+button:active {
+  background-color: violet;
 }

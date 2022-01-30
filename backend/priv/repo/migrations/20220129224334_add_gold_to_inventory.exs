@@ -3,7 +3,7 @@ defmodule Backend.Repo.Migrations.AddGoldToInventory do
 
   def change do
     alter table(:inventories) do
-      add :gold, :integer
+      add(:gold, :integer)
     end
   end
 end

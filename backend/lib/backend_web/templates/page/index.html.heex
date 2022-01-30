@@ -18,44 +18,30 @@
       </li>
     </div>
   </div>
-
-  <div class="card">
-    <div class="card-title">
-      Logs
-    </div>
-    <div class="card-body">
-      <ul>
-      <%= for log <- @conn.assigns.logs do %>
-        <li>
-          <%= elem(log, 0) %>
-          <%= elem(log, 1) %>
-        </li>
-      <% end %>
-      </ul>
-    </div>
-  </div>
-
   <div class="card">
     <div class="card-title">
       Activities
     </div>
     <div class="card-body">
-      <%= current_user(@conn).passive_activity %>
+      Current activity: <%= current_user(@conn).passive_activity %>
       <h2>Choose a new activity</h2>
       <ul>
         <li>
-          <%= link "Mine gold", 
-            to: Routes.activity_path(@conn, :set, "gold")
+          <%= button "Mine gold", 
+            to: Routes.activity_path(@conn, :set, "gold"),
+            method: :get
           %>
         </li>
         <li>
-          <%= link "Chop wood", 
-            to: Routes.activity_path(@conn, :set, "wood")
+          <%= button "Chop wood", 
+            to: Routes.activity_path(@conn, :set, "wood"),
+            method: :get
           %>
         </li>
         <li>
-          <%= link "Defend", 
-            to: Routes.activity_path(@conn, :set, "defend")
+          <%= button "Defend", 
+            to: Routes.activity_path(@conn, :set, "defend"),
+            method: :get
           %>
         </li>
       </ul>
@@ -69,13 +55,15 @@
     <div class="card-body">
       <ul>
         <li>
-          <%= link "Soldier (10 gold)", 
-            to: Routes.shop_path(@conn, :buy, "soldiers")
+          <%= button "Soldier (10 gold)", 
+            to: Routes.shop_path(@conn, :buy, "soldiers"),
+            method: :get
           %>
         </li>
         <li>
-          <%= link "House (100 wood)", 
-            to: Routes.shop_path(@conn, :buy, "houses")
+          <%= button "House (100 wood)", 
+            to: Routes.shop_path(@conn, :buy, "houses"),
+            method: :get
           %>
         </li>
       </ul>
@@ -114,5 +102,15 @@
         <%= submit "Attack" %>
       <% end %>
     </div>
+  </div>
+
+  <div class="p-4 mt-10 w-full bg-gray-900 rounded">
+    <div class="text-lg">
+      Logs
+    </div>
+    <pre>
+      <%= for log <- @conn.assigns.logs do %><%= elem(log, 0) %>: <%= elem(log, 1) %>
+      <% end %>
+    </pre>
   </div>
 </div>
