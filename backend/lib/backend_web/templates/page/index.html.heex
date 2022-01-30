@@ -13,7 +13,7 @@
     <% else %>
       <ul>
         <%= for {item, amount} <- items do %>
-          <li><%= "#{item}: #{amount}" %></li>
+          <li><%= "#{Backend.Items.get_item(String.to_atom(item)).label}: #{amount}" %></li>
         <% end %>
       </ul>
     <% end %>
@@ -27,7 +27,7 @@
       Current activity: <%= user.passive_activity %>
       <h2>Choose a new activity</h2>
       <ul>
-        <%= for {_, item} <- Backend.Items.generated_items() do %>
+        <%= for {_, %{generated: item}} <- Backend.Items.generated_items() do %>
           <li>
             <%= button(
                 "#{item.activity_label} (every #{item.seconds_per_item}s)",
@@ -79,7 +79,7 @@
         <%= number_input f, :amount, value: 1 %>
         <%= select f, 
           :product, 
-          value: Backend.Game.all_item_names_for_user(user) 
+          value: Backend.Game.all_item_labels_for_user(user) 
         %>
         <%= submit "Donate" %>
       <% end %>
@@ -98,10 +98,10 @@
           :target, 
           placeholder: "Username to attack" 
         %>
-        <%= select f, :target_product, value: Backend.Items.all_item_keys() %>
+        <%= select f, :target_product, value: Backend.Items.all_item_labels() %>
         <%= label :amount, "Attack with" %>
         <%= number_input f, :amount, value: 1 %>
-        <%= select f, :product, value: Backend.Game.all_weapon_names_for_user(user) %>
+        <%= select f, :product, value: Backend.Game.all_weapon_labels_for_user(user) %>
         <div class="p-2">
           <%= submit "Attack" %>
         </div>

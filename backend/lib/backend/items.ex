@@ -6,7 +6,6 @@ defmodule Backend.Items do
         }
 
   @type for_sale :: %{
-          label: String.t(),
           requirements: nil | %{atom() => integer()},
           cost: %{atom() => integer()}
         }
@@ -17,6 +16,7 @@ defmodule Backend.Items do
 
   @type item :: %{
           damage_resistance: integer(),
+          label: String.t(),
           victory_points: nil | integer(),
           generated: nil | generated(),
           for_sale: nil | for_sale(),
@@ -28,6 +28,7 @@ defmodule Backend.Items do
     ## Generated items
     ##
     clay: %{
+      label: "Clay",
       damage_resistance: 1,
       generated: %{
         activity_label: "Dig clay",
@@ -36,6 +37,7 @@ defmodule Backend.Items do
       }
     },
     wood: %{
+      label: "Wood",
       damage_resistance: 1,
       generated: %{
         activity_label: "Chop wood",
@@ -44,6 +46,7 @@ defmodule Backend.Items do
       }
     },
     gold: %{
+      label: "Gold",
       damage_resistance: 2,
       generated: %{
         activity_label: "Mine gold",
@@ -56,9 +59,9 @@ defmodule Backend.Items do
     ## Items for sale
     ##
     pointy_stick: %{
+      label: "Pointy stick",
       damage_resistance: 1,
       for_sale: %{
-        label: "Pointy stick",
         cost: %{
           wood: 1
         }
@@ -68,9 +71,9 @@ defmodule Backend.Items do
       }
     },
     kiln: %{
+      label: "Kiln",
       damage_resistance: 10,
       for_sale: %{
-        label: "Kiln",
         cost: %{
           wood: 50,
           clay: 50
@@ -78,9 +81,9 @@ defmodule Backend.Items do
       }
     },
     brick: %{
+      label: "Brick",
       damage_resistance: 10,
       for_sale: %{
-        label: "Brick",
         requirements: %{
           kiln: 1
         },
@@ -90,10 +93,10 @@ defmodule Backend.Items do
       }
     },
     house: %{
+      label: "House",
       damage_resistance: 20,
       victory_points: 1,
       for_sale: %{
-        label: "House",
         cost: %{
           brick: 5,
           wood: 10
@@ -113,30 +116,30 @@ defmodule Backend.Items do
   @doc """
   Filters @items down to entries that can be generated.
   """
-  @spec generated_items :: %{atom() => generated()}
+  @spec generated_items :: %{atom() => item()}
   def generated_items() do
     items_by_property(:generated)
   end
 
-  @spec all_item_keys :: [String.t()]
-  def all_item_keys() do
+  @spec all_item_labels :: [String.t()]
+  def all_item_labels() do
     @items
-    |> Enum.map(fn {k, _} -> Atom.to_string(k) end)
+    |> Enum.map(fn {_, props} -> props.label end)
   end
 
   ##
   ## Items for sale
   ##
 
-  @spec for_sale_items :: %{atom() => for_sale()}
+  @spec for_sale_items :: %{atom() => item()}
   def for_sale_items() do
     items_by_property(:for_sale)
   end
 
-  @spec for_sale_cost_string(for_sale()) :: String.t()
+  @spec for_sale_cost_string(item()) :: String.t()
   def for_sale_cost_string(item) do
     requirements =
-      case Map.get(item, :requirements, nil) do
+      case Map.get(item.for_sale, :requirements, nil) do
         nil ->
           ""
 
@@ -149,7 +152,7 @@ defmodule Backend.Items do
       end
 
     cost =
-      Enum.map(item.cost, fn {k, amount} ->
+      Enum.map(item.for_sale.cost, fn {k, amount} ->
         "#{amount} #{k}"
       end)
       |> Enum.join(", ")
@@ -191,7 +194,7 @@ defmodule Backend.Items do
     |> Enum.flat_map(fn {item, props} ->
       case Map.get(props, property, nil) do
         nil -> []
-        gen -> [{item, gen}]
+        _ -> [{item, props}]
       end
     end)
     |> Map.new()

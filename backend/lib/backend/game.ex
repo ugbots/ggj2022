@@ -23,10 +23,13 @@ defmodule Backend.Game do
   @doc """
   Gets the name of all items held by the given user.
   """
-  @spec all_item_names_for_user(%User{}) :: [String.t()]
-  def all_item_names_for_user(user) do
+  @spec all_item_labels_for_user(%User{}) :: [String.t()]
+  def all_item_labels_for_user(user) do
     inventory_for_user(user).items
     |> Map.keys()
+    |> Enum.map(fn name ->
+      Items.get_item(String.to_atom(name)).label
+    end)
   end
 
   @spec victory_points_for_user(%User{}) :: integer()
@@ -38,16 +41,15 @@ defmodule Backend.Game do
     end)
   end
 
-  @spec all_weapon_names_for_user(%User{}) :: [String.t()]
-  def all_weapon_names_for_user(user) do
+  @spec all_weapon_labels_for_user(%User{}) :: [String.t()]
+  def all_weapon_labels_for_user(user) do
     all_weapons = Items.weapon_items()
 
     inventory_for_user(user).items
     |> Enum.flat_map(fn {item_name, _} ->
-      if Map.has_key?(all_weapons, String.to_atom(item_name)) do
-        [item_name]
-      else
-        []
+      case Map.get(all_weapons, String.to_atom(item_name), nil) do
+        nil -> []
+        item -> [item.label]
       end
     end)
   end
@@ -220,7 +222,8 @@ defmodule Backend.Game do
         nil ->
           inv.items
 
-        gen ->
+        item ->
+          gen = item.generated
           old_amount = Map.get(inv.items, activity_str, 0)
           delta = trunc(elapsed_seconds / gen.seconds_per_item)
           Map.put(inv.items, activity_str, old_amount + delta)
