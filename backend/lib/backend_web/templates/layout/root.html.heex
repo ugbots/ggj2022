@@ -32,10 +32,10 @@
             <span class="p-1"><%= button "Sign up", to: Routes.user_path(@conn, :new), method: :get%></span>
           <% end %>
           <span class="p-1">
-            <%= button "About", to: Routes.page_path(@conn, :about), method: :get %>
+            <%= button "Leaderboard", to: Routes.page_path(@conn, :leaderboard), method: :get %>
           </span>
           <span class="p-1">
-            <%= button "Leaderboard", to: Routes.page_path(@conn, :leaderboard), method: :get %>
+            <%= button "About", to: Routes.page_path(@conn, :about), method: :get %>
           </span>
       </nav>
     </header>

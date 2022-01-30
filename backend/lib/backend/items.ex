@@ -45,6 +45,15 @@ defmodule Backend.Items do
         seconds_per_item: 1
       }
     },
+    iron_ore: %{
+      label: "Iron ore",
+      damage_resistance: 1,
+      generated: %{
+        activity_label: "Mine iron ore",
+        activity: "iron_ore",
+        seconds_per_item: 2
+      }
+    },
     gold: %{
       label: "Gold",
       damage_resistance: 2,
@@ -68,6 +77,18 @@ defmodule Backend.Items do
       },
       weapon: %{
         damage: 1
+      }
+    },
+    iron_ingot: %{
+      label: "Iron ingot",
+      damage_resistance: 5,
+      for_sale: %{
+        requirements: %{
+          smelter: 1,
+        },
+        cost: %{
+          iron_ore: 2,
+        }
       }
     },
     kiln: %{
@@ -100,6 +121,15 @@ defmodule Backend.Items do
         cost: %{
           brick: 5,
           wood: 10
+        }
+      }
+    },
+    smelter: %{
+      label: "Smelter",
+      damage_resistance: 20,
+      for_sale: %{
+        cost: %{
+          brick: 20,
         }
       }
     }
@@ -149,7 +179,7 @@ defmodule Backend.Items do
 
         reqs ->
           Enum.map(reqs, fn {k, amount} ->
-            "#{amount} #{k}"
+            "#{amount} #{get_item(k).label}"
           end)
           |> Enum.join(", ")
           |> (fn x -> "(requires #{x})" end).()
@@ -157,7 +187,7 @@ defmodule Backend.Items do
 
     cost =
       Enum.map(item.for_sale.cost, fn {k, amount} ->
-        "#{amount} #{k}"
+        "#{amount} #{get_item(k).label}"
       end)
       |> Enum.join(", ")
 
