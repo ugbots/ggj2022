@@ -8,7 +8,7 @@ defmodule Backend.Game.Inventory do
     field :gold, :integer
     field :soldiers, :integer
     field :houses, :integer
-    belongs_to :user, Backend.Accounts.User 
+    belongs_to :user, Backend.Accounts.User
 
     timestamps()
   end

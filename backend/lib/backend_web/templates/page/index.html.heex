@@ -26,18 +26,16 @@
       Current activity: <%= current_user(@conn).passive_activity %>
       <h2>Choose a new activity</h2>
       <ul>
-        <li>
-          <%= button "Mine gold", 
-            to: Routes.activity_path(@conn, :set, "gold"),
-            method: :get
-          %>
-        </li>
-        <li>
-          <%= button "Chop wood", 
-            to: Routes.activity_path(@conn, :set, "wood"),
-            method: :get
-          %>
-        </li>
+        <%= for {_, item} <- Backend.Items.generated_items() do %>
+          <li>
+            <%= button(
+                "#{item.activity_label} (every #{item.seconds_per_item}s)",
+                to: Routes.activity_path(@conn, :set, item.activity),
+                method: :get
+              )
+            %>
+          </li>
+        <% end %>
         <li>
           <%= button "Defend", 
             to: Routes.activity_path(@conn, :set, "defend"),

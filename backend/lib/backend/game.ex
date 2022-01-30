@@ -18,7 +18,7 @@ defmodule Backend.Game do
       last_read: DateTime.utc_now(),
       user_id: user.id
     })
-    |> Repo.insert
+    |> Repo.insert()
   end
 
   @spec buy_product_for_user(%User{}, binary()) :: any
@@ -140,27 +140,35 @@ defmodule Backend.Game do
     end
   end
 
+  @spec reconcile_inventory_for_user(%User{}) :: any()
   def reconcile_inventory_for_user(user) do
-    Repo.one(Ecto.assoc(user, :inventory))
+    Accounts.get_inventory(user)
     |> reconcile(user.passive_activity)
     |> Repo.update()
   end
 
-  defp reconcile(inventory, activity) do
+  @spec reconcile(%Inventory{}, String.t()) :: Ecto.Changeset.t()
+  defp reconcile(inventory, activity_str) do
+    activity = String.to_existing_atom(activity_str)
     now = DateTime.utc_now()
     then = inventory.last_read
     seconds_between = DateTime.diff(now, then)
 
-    seconds_per_tick = 1
-    elapsed_ticks = trunc(seconds_between / seconds_per_tick)
+    elapsed_seconds = trunc(seconds_between)
 
     params = %{last_read: now}
 
+    generators = Backend.Items.generated_items()
+
     params =
-      case activity do
-        "wood" -> Map.put(params, :wood, inventory.wood + elapsed_ticks)
-        "gold" -> Map.put(params, :gold, inventory.gold + elapsed_ticks)
-        "defend" -> params
+      case Map.get(generators, activity, nil) do
+        nil ->
+          params
+
+        gen ->
+          old_amount = Map.get(inventory, activity, 0)
+          delta = trunc(elapsed_seconds / gen.seconds_per_item)
+          Map.put(params, activity, old_amount + delta)
       end
 
     Inventory.changeset(inventory, params)

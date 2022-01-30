@@ -105,7 +105,15 @@ defmodule Backend.Accounts do
     User.changeset(user, attrs)
   end
 
-  @doc"""
+  @doc """
+  Given a User, fetches their inventory.
+  """
+  @spec get_inventory(%User{}) :: %Backend.Game.Inventory{}
+  def get_inventory(user) do
+    Repo.one(Ecto.assoc(user, :inventory))
+  end
+
+  @doc """
   Returns a user, by their username, if they exist, or nil.
   """
   def get_by_username(username) when is_nil(username) do
