@@ -33,9 +33,9 @@ defmodule Backend.Game do
   @spec victory_points_for_user(%User{}) :: integer()
   def victory_points_for_user(user) do
     inventory_for_user(user).items
-    |> Enum.reduce(0, fn {k, _}, acc ->
+    |> Enum.reduce(0, fn {k, amount}, acc ->
       item = Items.get_item(String.to_atom(k))
-      acc + Map.get(item, :victory_points, 0)
+      acc + Map.get(item, :victory_points, 0) * amount
     end)
   end
 

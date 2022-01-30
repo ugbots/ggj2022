@@ -13,24 +13,27 @@
     <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}/>
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
-  <body class="m0 h-screen w-full bg-black">
+  <body class="m0 h-screen w-full bg-black text-white">
     <header 
       class="fixed w-full px-10 py-2 glow-shadow bg-purple-800 text-white flex justify-between items-center">
       <div class="text-display text-2xl">
         <%= link "Jameson", to: Routes.page_path(@conn, :index) %>
       </div>
-      <nav class="flex flex-col justify-center">
+      <nav class="flex flex-row justify-center items-center">
           <%= if signed_in?(@conn) do %>
-            <span class="py-1">
+            <span class="p-1">
               Logged in as <%= current_username(@conn) %>
             </span>
-            <span class="py-1">
+            <span class="p-1">
               <%= button "Log out", to: Routes.session_path(@conn, :delete), method: :delete %>
             </span>
           <% else %>
-            <span class="py-1"><%= button "Log in", to: Routes.session_path(@conn, :new), method: :get %></span>
-            <span class="py-1"><%= button "Sign up", to: Routes.user_path(@conn, :new), method: :get%></span>
+            <span class="p-1"><%= button "Log in", to: Routes.session_path(@conn, :new), method: :get %></span>
+            <span class="p-1"><%= button "Sign up", to: Routes.user_path(@conn, :new), method: :get%></span>
           <% end %>
+          <span class="p-1">
+            <%= button "About", to: Routes.page_path(@conn, :about), method: :get %>
+          </span>
       </nav>
     </header>
     <%= @inner_content %>

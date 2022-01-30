@@ -18,6 +18,7 @@ defmodule BackendWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/about", PageController, :about
 
     # Activities
     get "/activity/:activity", ActivityController, :set
