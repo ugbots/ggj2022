@@ -114,7 +114,7 @@
   <div class="text-lg">
     Logs
   </div>
-  <pre>
+  <pre class="whitespace-pre-wrap">
     <%= for log <- @conn.assigns.logs do %><%= elem(log, 0) %>: <%= elem(log, 1) %>
     <% end %>
   </pre>
