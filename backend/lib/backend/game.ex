@@ -23,13 +23,11 @@ defmodule Backend.Game do
   @doc """
   Gets the name of all items held by the given user.
   """
-  @spec all_item_labels_for_user(%User{}) :: [String.t()]
-  def all_item_labels_for_user(user) do
+  @spec all_item_atoms_for_user(%User{}) :: [String.t()]
+  def all_item_atoms_for_user(user) do
     inventory_for_user(user).items
     |> Map.keys()
-    |> Enum.map(fn name ->
-      Items.get_item(String.to_atom(name)).label
-    end)
+    |> Enum.map(fn name -> String.to_atom(name) end)
   end
 
   @spec victory_points_for_user(%User{}) :: integer()
@@ -41,15 +39,17 @@ defmodule Backend.Game do
     end)
   end
 
-  @spec all_weapon_labels_for_user(%User{}) :: [String.t()]
-  def all_weapon_labels_for_user(user) do
-    all_weapons = Items.weapon_items()
-
+  @spec all_weapon_atoms_for_user(%User{}) :: [atom()]
+  def all_weapon_atoms_for_user(user) do
     inventory_for_user(user).items
     |> Enum.flat_map(fn {item_name, _} ->
-      case Map.get(all_weapons, String.to_atom(item_name), nil) do
-        nil -> []
-        item -> [item.label]
+      atom = String.to_atom(item_name)
+      item = Items.get_item(atom)
+
+      if Map.has_key?(item, :weapon) do
+        [atom]
+      else
+        []
       end
     end)
   end
@@ -162,6 +162,7 @@ defmodule Backend.Game do
 
       (result = can_afford(inventory, %{}, user_delta)) != :ok ->
         {:error, message} = result
+        raise {inventory, user_delta}
 
         Logs.create_user_log(
           user,
@@ -179,24 +180,39 @@ defmodule Backend.Game do
       true ->
         total_damage = amount * Items.get_item(product).weapon.damage
         target_resistance = Items.get_item(target_product).damage_resistance
+        is_defending = target_user.passive_activity == "defend"
+
         items_destroyed = trunc(total_damage / target_resistance)
+
+        items_destroyed =
+          if is_defending do
+            trunc(items_destroyed / 2)
+          else
+            items_destroyed
+          end
 
         target_inv = inventory_for_user(target_user)
         target_delta = Map.put(%{}, target_product, -items_destroyed)
         adjust(target_inv, %{}, target_delta)
 
+        defense_str = if is_defending, do: " You were defending.", else: ""
+
         Logs.create_user_log(
           target_user,
-          "Attacked by #{user.username} with #{amount} #{product_name}! " <>
-            "Lost #{items_destroyed} #{target_product_name}."
+          "Attacked by #{user.username} with #{amount} #{product_name}!" <>
+            defense_str <>
+            " Lost #{items_destroyed} #{target_product_name}."
         )
 
         adjust(inventory, %{}, user_delta)
 
+        defense_str = if is_defending, do: " They were defending.", else: ""
+
         Logs.create_user_log(
           user,
-          "Attacked #{target_username} with #{amount} #{product_name}! " <>
-            "Destroyed #{items_destroyed} #{target_product_name}."
+          "Attacked #{target_username} with #{amount} #{product_name}!" <>
+            defense_str <>
+            " Destroyed #{items_destroyed} #{target_product_name}."
         )
     end
   end

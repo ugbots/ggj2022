@@ -105,6 +105,10 @@ defmodule Backend.Items do
     }
   }
 
+  def get_items() do
+    @items
+  end
+
   def get_item(item_atom) do
     Map.get(@items, item_atom)
   end

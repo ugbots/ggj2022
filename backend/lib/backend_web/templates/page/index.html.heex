@@ -1,7 +1,8 @@
 <% user = current_user(@conn) %>
 <div class="flex flex-row justify-around flex-wrap">
   <div class="p-4 border rounded border-gray-500">
-    <div class="text-lg">
+    <div class="text-lg cursor-help"
+         title="The items that are currently in your posession.">
       Inventory
     </div>
     <div class="text-yellow-200">
@@ -20,7 +21,8 @@
   </div>
 
   <div class="p-4 border rounded border-gray-500">
-    <div class="text-lg">
+    <div class="text-lg cursor-help"
+         title="You can choose to perform a single activity passively.">
       Activities
     </div>
     <div class="card-body">
@@ -40,6 +42,7 @@
         <li>
           <%= button "Defend", 
             to: Routes.activity_path(@conn, :set, "defend"),
+            title: "When defending, any attacks you receive deal half damage.",
             method: :get
           %>
         </li>
@@ -79,7 +82,10 @@
         <%= number_input f, :amount, value: 1 %>
         <%= select f, 
           :product, 
-          value: Backend.Game.all_item_labels_for_user(user) 
+          value: Backend.Game.all_item_atoms_for_user(user) 
+            |> Enum.map(fn atom -> 
+              [key: Backend.Items.get_item(atom).label, value: atom]
+            end)
         %>
         <%= submit "Donate" %>
       <% end %>
@@ -98,10 +104,22 @@
           :target, 
           placeholder: "Username to attack" 
         %>
-        <%= select f, :target_product, value: Backend.Items.all_item_labels() %>
+        <%= select f, 
+          :target_product, 
+          value: Backend.Items.get_items()
+            |> Enum.map(fn {atom, item} -> [key: item.label, value: atom]
+          end )
+        %>
         <%= label :amount, "Attack with" %>
         <%= number_input f, :amount, value: 1 %>
-        <%= select f, :product, value: Backend.Game.all_weapon_labels_for_user(user) %>
+        <%= select f, 
+          :product, 
+          value: Backend.Game.all_weapon_atoms_for_user(user) 
+            |> Enum.map(fn atom -> 
+              item = Backend.Items.get_item(atom)
+              [key: item.label, value: atom] 
+            end)
+        %>
         <div class="p-2">
           <%= submit "Attack" %>
         </div>
