@@ -7,6 +7,7 @@ defmodule Backend.Items do
 
   @type for_sale :: %{
           label: String.t(),
+          requirements: nil | %{atom() => integer()},
           cost: %{atom() => integer()}
         }
 
@@ -39,6 +40,26 @@ defmodule Backend.Items do
     ##
     ## Items for sale
     ##
+    kiln: %{
+      for_sale: %{
+        label: "Kiln",
+        cost: %{
+          wood: 50,
+          clay: 50
+        }
+      }
+    },
+    brick: %{
+      for_sale: %{
+        label: "Brick",
+        requirements: %{
+          kiln: 1
+        },
+        cost: %{
+          clay: 5
+        }
+      }
+    },
     soldier: %{
       for_sale: %{
         label: "Soldier",
@@ -51,8 +72,8 @@ defmodule Backend.Items do
       for_sale: %{
         label: "House",
         cost: %{
-          clay: 50,
-          wood: 100,
+          brick: 5,
+          wood: 10
         }
       }
     }
@@ -81,13 +102,26 @@ defmodule Backend.Items do
 
   @spec for_sale_cost_string(for_sale()) :: String.t()
   def for_sale_cost_string(item) do
+    requirements =
+      case Map.get(item, :requirements, nil) do
+        nil ->
+          ""
+
+        reqs ->
+          Enum.map(reqs, fn {k, amount} ->
+            "#{amount} #{k}"
+          end)
+          |> Enum.join(", ")
+          |> (fn x -> "(requires #{x})" end).()
+      end
+
     cost =
       Enum.map(item.cost, fn {k, amount} ->
         "#{amount} #{k}"
       end)
       |> Enum.join(", ")
 
-    "#{item.label} (#{cost})"
+    "#{item.label} #{requirements} (costs #{cost})"
   end
 
   @spec cost_delta_for_item(atom()) :: %{atom() => integer()}
@@ -95,6 +129,12 @@ defmodule Backend.Items do
     Map.get(@items, item_key).for_sale.cost
     |> Enum.map(fn {k, v} -> {k, -v} end)
     |> Map.new()
+  end
+
+  @spec requirements_for_item(atom()) :: %{atom() => integer()}
+  def requirements_for_item(item_key) do
+    Map.get(@items, item_key).for_sale
+    |> Map.get(:requirements, %{})
   end
 
   @spec items_by_property(atom()) :: %{atom() => any()}

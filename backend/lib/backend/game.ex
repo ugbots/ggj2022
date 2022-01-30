@@ -4,6 +4,7 @@ defmodule Backend.Game do
   alias Backend.Accounts
   alias Backend.Accounts.User
   alias Backend.Logs
+  alias Backend.Items
   alias Backend.Repo
   alias Backend.Game.Inventory
 
@@ -25,11 +26,13 @@ defmodule Backend.Game do
     product = String.to_atom(product_name)
     inventory = Repo.one(Ecto.assoc(user, :inventory))
 
+    requirements = Items.requirements_for_item(product)
+
     delta =
-      Backend.Items.cost_delta_for_item(product)
+      Items.cost_delta_for_item(product)
       |> Map.put(product, 1)
 
-    case adjust(inventory, delta) do
+    case adjust(inventory, requirements, delta) do
       :ok ->
         Logs.create_user_log(user, "Bought #{product_name}.")
 
@@ -54,11 +57,11 @@ defmodule Backend.Game do
       amount <= 0 ->
         Logs.create_user_log(user, "Donation amount must be positive.")
 
-      not can_afford(inventory, delta) ->
+      {:error, message} = can_afford(inventory, %{}, delta) ->
         Logs.create_user_log(
           user,
           "Cannot donate #{amount_str} #{product_name} " <>
-            "to #{target_username}: not enough resources."
+            "to #{target_username}: #{message}"
         )
 
       target_user == nil ->
@@ -72,14 +75,14 @@ defmodule Backend.Game do
         target_inv = Repo.one(Ecto.assoc(target_user, :inventory))
 
         target_delta = Map.put(%{}, String.to_atom(product_name), amount)
-        adjust(target_inv, target_delta)
+        adjust(target_inv, %{}, target_delta)
 
         Logs.create_user_log(
           target_user,
           "Received #{amount_str} #{product_name} from #{user.username}"
         )
 
-        adjust(inventory, delta)
+        adjust(inventory, %{}, delta)
 
         Logs.create_user_log(
           user,
@@ -101,11 +104,11 @@ defmodule Backend.Game do
       amount <= 0 ->
         Logs.create_user_log(user, "Attack size must be positive.")
 
-      not can_afford(inventory, delta) ->
+      {:error, message} = can_afford(inventory, %{}, delta) ->
         Logs.create_user_log(
           user,
           "Cannot attack #{target_username} " <>
-            "with #{amount_str} #{product_name}: not enough resources."
+            "with #{amount_str} #{product_name}: #{message}"
         )
 
       target_user == nil ->
@@ -119,14 +122,14 @@ defmodule Backend.Game do
         target_inv = Repo.one(Ecto.assoc(target_user, :inventory))
 
         target_delta = Map.put(%{}, :house, -amount)
-        adjust(target_inv, target_delta)
+        adjust(target_inv, %{}, target_delta)
 
         Logs.create_user_log(
           target_user,
           "Attacked by #{user.username}! Lost #{amount_str} houses."
         )
 
-        adjust(inventory, delta)
+        adjust(inventory, %{}, delta)
 
         Logs.create_user_log(
           user,
@@ -152,7 +155,7 @@ defmodule Backend.Game do
     elapsed_seconds = trunc(seconds_between)
 
     items =
-      case Map.get(Backend.Items.generated_items(), activity, nil) do
+      case Map.get(Items.generated_items(), activity, nil) do
         nil ->
           inv.items
 
@@ -170,18 +173,30 @@ defmodule Backend.Game do
     Inventory.changeset(inv, params)
   end
 
-  defp can_afford(inv, delta) do
-    Enum.all?(delta, fn {item, amount} ->
-      Map.get(inv.items, Atom.to_string(item), 0) + amount >= 0
-    end)
+  defp can_afford(inv, requirements, delta) do
+    has_requirements =
+      Enum.all?(requirements, fn {item, amount} ->
+        Map.get(inv.items, Atom.to_string(item), 0) >= amount
+      end)
+
+    delta_does_not_go_negative =
+      Enum.all?(delta, fn {item, amount} ->
+        Map.get(inv.items, Atom.to_string(item), 0) + amount >= 0
+      end)
+
+    cond do
+      not has_requirements -> {:error, "Missing required items"}
+      not delta_does_not_go_negative -> {:error, "Insufficient funds"}
+      true -> :ok
+    end
   end
 
-  defp adjust(inv, delta) do
-    case can_afford(inv, delta) do
-      false ->
-        {:error, "insufficent funds"}
+  defp adjust(inv, requirements, delta) do
+    case can_afford(inv, requirements, delta) do
+      {:error, message} ->
+        {:error, message}
 
-      true ->
+      :ok ->
         items =
           Enum.reduce(delta, inv.items, fn {item, amount}, acc ->
             key = Atom.to_string(item)
