@@ -119,6 +119,13 @@ defmodule Backend.Game do
             "to #{target_username}: user not found."
         )
 
+      target_user.team != user.team ->
+        Logs.create_user_log(
+          user,
+          "Cannot donate #{amount_str} #{product_name} " <>
+            "to #{target_username}: user must be on your team."
+        )
+
       true ->
         target_inv = Repo.one(Ecto.assoc(target_user, :inventory))
 
@@ -176,6 +183,14 @@ defmodule Backend.Game do
           "Cannot attack #{target_username} " <>
             "with #{amount_str} #{product_name}: user not found"
         )
+
+      target_user.team == user.team ->
+        Logs.create_user_log(
+          user,
+          "Cannot attack #{target_username} " <>
+            "with #{amount_str} #{product_name}: Cannot attack user on your team."
+        )
+
 
       true ->
         total_damage = amount * Items.get_item(product).weapon.damage

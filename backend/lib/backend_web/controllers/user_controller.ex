@@ -12,12 +12,18 @@ defmodule BackendWeb.UserController do
   end
 
   def create(conn, %{"user" => user_params}) do
+    team = Enum.random(["green", "purple"])
+
+    user_params = Map.put(user_params, "team", team)
+
     case Accounts.create_user(user_params) do
       {:ok, user} ->
         Logs.create_user_log(user, "User " <> user.username <> " created.")
+
         case Game.create_inventory_for_user(user) do
-          {:ok, inventory} ->
+          {:ok, _} ->
             Logs.create_user_log(user, "Inventory created.")
+
             conn
             |> put_session(:current_user_id, user.id)
             |> put_flash(:info, "Signed up successfully.")

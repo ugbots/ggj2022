@@ -14,8 +14,7 @@
     <script defer phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </head>
   <body class="m0 h-screen w-full bg-black text-white">
-    <header 
-      class="fixed w-full px-10 py-2 glow-shadow bg-purple-800 text-white flex justify-between items-center">
+    <header class="fixed w-full px-10 py-2 glow-shadow bg-purple-800 text-white flex justify-between items-center">
       <div class="text-display text-2xl">
         <%= link "Jameson", to: Routes.page_path(@conn, :index) %>
       </div>

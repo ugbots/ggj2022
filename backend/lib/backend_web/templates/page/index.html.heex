@@ -5,6 +5,16 @@
          title="The items that are currently in your posession.">
       Inventory
     </div>
+    <%= case user.team do %>
+      <% "purple" ->  %>
+        <div class="text-purple-200">
+          Team: <%= user.team %>
+        </div>
+      <% "green" -> %>
+        <div class="text-green-200">
+          Team: <%= user.team %>
+        </div>
+    <% end %>
     <div class="text-yellow-200">
       Victory points: <%= Backend.Game.victory_points_for_user(user) %>
     </div>
