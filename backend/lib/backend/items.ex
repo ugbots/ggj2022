@@ -79,15 +79,80 @@ defmodule Backend.Items do
         damage: 1
       }
     },
+    iron_sword: %{
+      label: "Iron Sword",
+      damage_resistance: 5,
+      for_sale: %{
+        cost: %{
+          wood: 10,
+          iron_ingot: 1
+        }
+      },
+      weapon: %{
+        damage: 3
+      }
+    },
+    musket: %{
+      label: "Musket",
+      damage_resistance: 10,
+      for_sale: %{
+        cost: %{
+          wood: 10,
+          iron_ore: 10,
+          gunpowder: 1
+        }
+      },
+      weapon: %{
+        damage: 10
+      }
+    },
+    soldier: %{
+      label: "Soldier",
+      damage_resistance: 1,
+      for_sale: %{
+        cost: %{
+          gold_ingot: 1,
+          iron_ore: 5
+        }
+      },
+      weapon: %{
+        damage: 5
+      }
+    },
+    bomb: %{
+      label: "Bomb",
+      damage_resistance: 10,
+      for_sale: %{
+        cost: %{
+          gold_ingot: 1,
+          iron_ore: 5
+        }
+      },
+      weapon: %{
+        damage: 1000
+      }
+    },
     iron_ingot: %{
       label: "Iron ingot",
       damage_resistance: 5,
       for_sale: %{
         requirements: %{
-          smelter: 1,
+          smelter: 1
         },
         cost: %{
-          iron_ore: 2,
+          iron_ore: 5
+        }
+      }
+    },
+    gold_ingot: %{
+      label: "Gold ingot",
+      damage_resistance: 5,
+      for_sale: %{
+        requirements: %{
+          smelter: 1
+        },
+        cost: %{
+          gold: 5
         }
       }
     },
@@ -113,6 +178,32 @@ defmodule Backend.Items do
         }
       }
     },
+    alloy: %{
+      label: "Alloy",
+      damage_resistance: 10,
+      for_sale: %{
+        requirements: %{
+          smelter: 1
+        },
+        cost: %{
+          iron_ingot: 1,
+          gold_ingot: 1
+        }
+      }
+    },
+    gunpowder: %{
+      label: "Gunpowder",
+      damage_resistance: 5,
+      for_sale: %{
+        requirements: %{
+          scientist: 1
+        },
+        cost: %{
+          clay: 100,
+          wood: 10
+        }
+      }
+    },
     house: %{
       label: "House",
       damage_resistance: 20,
@@ -124,12 +215,33 @@ defmodule Backend.Items do
         }
       }
     },
+    stronghold: %{
+      label: "Stronghold",
+      damage_resistance: 50,
+      victory_points: 3,
+      for_sale: %{
+        cost: %{
+          brick: 10,
+          alloy: 10
+        }
+      }
+    },
     smelter: %{
       label: "Smelter",
       damage_resistance: 20,
       for_sale: %{
         cost: %{
-          brick: 20,
+          brick: 20
+        }
+      }
+    },
+    scientist: %{
+      label: "Scientist",
+      damage_resistance: 10,
+      for_sale: %{
+        cost: %{
+          gold_ingot: 5,
+          stronghold: 1
         }
       }
     }
@@ -187,6 +299,9 @@ defmodule Backend.Items do
 
     cost =
       Enum.map(item.for_sale.cost, fn {k, amount} ->
+        if get_item(k) == nil do
+          raise k
+        end
         "#{amount} #{get_item(k).label}"
       end)
       |> Enum.join(", ")
