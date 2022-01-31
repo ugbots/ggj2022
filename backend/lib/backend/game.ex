@@ -85,7 +85,7 @@ defmodule Backend.Game do
       {:error, message} ->
         Logs.create_user_log(
           user,
-          "Cannot buy #{product_name}: #{message}."
+          "Cannot buy #{product_name}: #{message}"
         )
     end
   end
