@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <%= csrf_meta_tag() %>
-    <%= live_title_tag assigns[:page_title] || "Jameson", suffix: " - GGJ2022" %>
+    <%= live_title_tag assigns[:page_title] || "World War IV", suffix: " - GGJ2022" %>
     <link href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,7 @@
   <body class="m0 h-screen w-full bg-black text-white">
     <header class="fixed w-full px-10 py-2 glow-shadow bg-purple-800 text-white flex justify-between items-center">
       <div class="text-display text-2xl">
-        <%= link "Jameson", to: Routes.page_path(@conn, :index) %>
+        <%= link "World War IV", to: Routes.page_path(@conn, :index) %>
       </div>
       <nav class="flex flex-row justify-center items-center">
           <%= if signed_in?(@conn) do %>
