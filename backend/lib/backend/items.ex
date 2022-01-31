@@ -124,8 +124,8 @@ defmodule Backend.Items do
       damage_resistance: 10,
       for_sale: %{
         cost: %{
-          gold_ingot: 1,
-          iron_ore: 5
+          alloy: 50,
+          gunpowder: 50
         }
       },
       weapon: %{
